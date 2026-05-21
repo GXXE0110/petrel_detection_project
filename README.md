@@ -1,6 +1,6 @@
-# Petrel Detection — Streaked Shearwater Call Detection System
+# Petrel Detection — Grey‑faced Petrel Call Detection System
 
-Automated detection and annotation of Streaked Shearwater (*Calonectris leucomelas*) calls using the [vak](https://github.com/vocalpy/vak) framework and TweetyNet neural network, with a custom loss function:
+Automated detection and annotation of Grey‑faced Petrel (*Pterodroma gouldi*) calls using the [vak](https://github.com/vocalpy/vak) framework and TweetyNet neural network, with a custom loss function:
 
 ```
 Total Loss = α · CrossEntropy + β · BoundaryLoss + γ · FalsePositiveLoss
