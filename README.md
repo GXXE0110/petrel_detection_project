@@ -76,7 +76,7 @@ Simply copy the `vak/` folder from this repository and overwrite the directory a
 | Script | Description |
 |--------|-------------|
 | `split_data.py` | Splits long audio files into 30-second segments and generates corresponding annotation CSVs |
-| `generate_tables.py` | Converts model output `.annot.csv` files back into Raven Pro annotation tables (batch supported) |
+| `generate_tables.py` | Converts model output `.annot.csv` files back into Raven Lite annotation tables (batch supported) |
 | `post_hoc.py` | Compares manual annotations against model predictions; outputs FDR, Miss Rate, Precision, and Recall |
 | `run_experiment.py` | Runs the full experiment pipeline: train → predict → evaluate → summarise results to `experiment_summary.csv` |
 | `w_tune.py` | Reads `experiment_summary.csv` and ranks experiments by a weighted score to identify the optimal hyperparameter combination |
