@@ -75,16 +75,17 @@ Simply copy the `vak/` folder from this repository and overwrite the directory a
 
 | Script | Description |
 |--------|-------------|
-| `split_data.py` | Splits long audio files into 30-second segments and generates corresponding annotation CSVs |
-| `generate_tables.py` | Converts model output `.annot.csv` files back into Raven Lite annotation tables (batch supported) |
-| `post_hoc.py` | Compares manual annotations against model predictions; outputs FDR, Miss Rate, Precision, and Recall |
-| `run_experiment.py` | Runs the full experiment pipeline: train → predict → evaluate → summarise results to `experiment_summary.csv` |
-| `w_tune.py` | Reads `experiment_summary.csv` and ranks experiments by a weighted score to identify the optimal hyperparameter combination |
-| `test_postprocess.py` | Tests different `min_segment_dur` thresholds (0.05 / 0.08 / 0.10 / 0.15) to find the best post-processing filter |
-| `extract_fp_tp.py` | Separates TP and FP detections from evaluation results and exports them as Raven-format files for manual review |
-| `edit_configure.py` | Automatically updates data paths in `config_predict.toml` to reduce manual errors during batch prediction |
-| `downstream.py` | Converts Raven annotation timestamps into seconds elapsed since 06:00, for downstream temporal analysis (batch supported) |
-| `analyze_audio_gaps.py` | Checks for gaps or missing recordings between recorder files; outputs `audio_gap_report.csv` |
+| `split_data.py` | Splits long audio recordings into 30-second segments and generates corresponding annotation CSV files |
+| `generate_tables.py` | Converts model prediction `.annot.csv` outputs back into Raven Lite annotation tables (batch supported) |
+| `post_hoc.py` | Compares manual annotations with model predictions and computes evaluation metrics including FDR, Miss Rate, Precision, and Recall |
+| `run_experiment.py` | Runs the complete experiment pipeline (train → predict → evaluate) and summarises results into `experiment_summary.csv` |
+| `w_tune.py` | Reads `experiment_summary.csv` and ranks experiments using a weighted score to identify the optimal hyperparameter combination |
+| `test_postprocess.py` | Evaluates different `min_segment_dur` thresholds (0.05 / 0.08 / 0.10 / 0.15) to determine the best post-processing setting |
+| `extract_fp_tp.py` | Separates TP and FP detections from evaluation results and exports them as Raven-format annotation tables for manual inspection |
+| `edit_configure.py` | Updates `config_predict.toml` for new prediction datasets by modifying `data_dir`, output filenames, and removing outdated prep dataset paths |
+| `edit_configure_noprep.py` | Updates `config_predict.toml` for datasets that have already been prepared, automatically locating the latest prep dataset and updating the prediction path |
+| `downstream.py` | Converts Raven annotation timestamps into seconds elapsed since 18:00 for downstream temporal analysis (batch supported) |
+| `analyze_audio_gaps.py` | Detects gaps or missing intervals between recorder audio files and exports results to `audio_gap_report.csv` |
 
 ---
 
@@ -218,32 +219,80 @@ Converts annotation timestamps to seconds elapsed since 06:00, merges and sorts 
 
 ## 6. Batch Prediction for Multiple Recorders
 
-When processing overnight recordings from multiple recorders, Steps 3 (prep) and 5 (predict) must be repeated for each audio file, updating `config_predict.toml` each time.
+When processing overnight recordings from multiple recorders, prediction must be repeated for each audio file while updating `config_predict.toml` accordingly.
 
-Use `edit_configure.py` to automate configuration updates and avoid manual errors:
+Two configuration scripts are provided depending on whether the prediction dataset has already been prepared.
+
+---
+
+### Option A — New Dataset (Prep Required)
+
+Use `edit_configure.py` when the audio file has not yet been prepared with `vak prep`.
 
 **1.** Open `edit_configure.py` and set the recorder name:
 
 ```python
-new_name = "r10_250505102732"   # Replace with the current recorder's folder name
+new_name = "r10_250505102732"   # Replace with the current recorder name
 ```
 
-**2.** Run the script to automatically update the config file:
+**2.** Run the configuration update script:
 
 ```bash
 python petrel_detection/edit_configure.py
 ```
 
-**3.** Run prep and predict in Anaconda Prompt:
+This automatically updates:
+
+- `data_dir`
+- `annot_csv_filename`
+- removes outdated prep dataset paths
+
+**3.** Run prep and prediction:
 
 ```bash
 vak prep config_predict.toml
 vak predict config_predict.toml
 ```
 
-**4.** Repeat steps 1–3 for each recorder.
+**4.** Repeat Steps 1–3 for each recorder.
 
-**5.** Once all recorders are processed, run:
+---
+
+### Option B — Existing Prepared Dataset (No Prep Required)
+
+Use `edit_configure_noprep.py` if the prediction dataset has already been prepared previously.
+
+**1.** Open `edit_configure_noprep.py` and set the recorder name:
+
+```python
+new_name = "r10_250505102732"
+```
+
+**2.** Run the script:
+
+```bash
+python petrel_detection/edit_configure_noprep.py
+```
+
+The script automatically:
+
+- locates the latest prepared dataset
+- updates the prediction dataset path
+- updates `annot_csv_filename`
+
+**3.** Run prediction only:
+
+```bash
+vak predict config_predict.toml
+```
+
+**4.** Repeat for all required recorders.
+
+---
+
+### Final Post-processing
+
+Once all recorders have been processed, run:
 
 ```bash
 python petrel_detection/generate_tables.py
