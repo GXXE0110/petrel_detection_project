@@ -32,8 +32,23 @@ def reconstruct_raven_final(predict_csv_path, output_dir, segment_duration=30, t
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+    # Check whether the file actually exists and whether its size is 0 bytes
+    if not os.path.exists(predict_csv_path) or os.path.getsize(predict_csv_path) == 0:
+        print(f"⚠️ Warning: File is empty or does not exist (0 bytes). Skipping: {os.path.basename(predict_csv_path)}")
+        return None
+
     # 1. Load prediction data
-    df = pd.read_csv(predict_csv_path)
+    try:
+        df = pd.read_csv(predict_csv_path)
+    except pd.errors.EmptyDataError:
+        # Catching exceptions when Pandas reads a completely blank file (or one containing only newline characters)
+        print(f"⚠️ Warning: No data to parse (EmptyDataError). Skipping: {os.path.basename(predict_csv_path)}")
+        return None
+
+    # If the file has a header row but zero rows, or if the required columns are missing entirely
+    if df.empty or 'onset_s' not in df.columns or 'offset_s' not in df.columns:
+        print(f"⚠️ Warning: Missing data or required columns. Skipping: {os.path.basename(predict_csv_path)}")
+        return None
 
     # 2. Drop empty rows
     df_clean = df.dropna(subset=['onset_s', 'offset_s']).copy()
