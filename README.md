@@ -34,6 +34,7 @@ We recommend creating a dedicated Anaconda environment:
 
 ```bash
 conda create -n vak-env python=3.11
+# or using 'conda env create -f environment.yml' to copy my environment
 conda activate vak-env
 pip install vak
 ```
