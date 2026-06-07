@@ -53,8 +53,12 @@ Simply copy the `vak/` folder from this repository and overwrite the directory a
 ## 2. Repository Structure
 
 ```
-├── vak/                        # Modified vak library with custom loss function
-├── petrel_detection/           # Experiment and utility scripts
+petrel_project/
+│
+├── config_train.toml
+├── config_predict.toml
+│
+├── petrel_detection/                  # Experiment and utility scripts
 │   ├── split_data.py
 │   ├── generate_tables.py
 │   ├── post_hoc.py
@@ -63,13 +67,48 @@ Simply copy the `vak/` folder from this repository and overwrite the directory a
 │   ├── test_postprocess.py
 │   ├── extract_fp_tp.py
 │   ├── edit_configure.py
+│   ├── edit_configure_noprep.py
 │   ├── downstream.py
 │   └── analyze_audio_gaps.py
-├── config_train.toml           # Training configuration file
-└── config_predict.toml         # Prediction configuration file
+│
+├── train_data/                        # Training dataset
+│   ├── seg001.wav
+│   ├── seg001.wav.csv
+│   └── ...
+│
+├── test_data/                         # Test dataset
+│   └── ...
+│
+├── predict_data/                      # Prediction dataset
+│   └── ...
+│
+├── prep/                              # vak-prepared datasets
+│   ├── train/
+│   ├── test/
+│   └── predict/
+│
+├── train/
+│   └── results/
+│       ├── results_xxxxxx/           # Subfiles/folders do not need to be created manually.
+│       │   ├── labelmap.json
+│       │   ├── FramesStandardizer/
+│       │   └── checkpoints/
+│       │       └── max-val-acc-checkpoint.pt
+│       └── ...
+│
+├── results/
+│   ├── test/                          # Test-set predictions
+│   ├── predict/                       # Prediction outputs
+│   ├── raven_tables/                  # Raven annotation tables
+│   ├── metric_tables/                 # GT vs Pred comparison tables
+│   └── stats_csv/                     # Time-of-arrival statistics
+│
+└── vak/                               # Modified vak source code
+    (copy to site-packages/vak after installation)
+
+* All scripts are executed inside the `vak-env` environment.
 ```
 
----
 
 ## 3. Script Reference
 
