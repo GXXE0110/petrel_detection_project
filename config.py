@@ -151,6 +151,6 @@ DOWNSTREAM_OUTPUT_DIR = r"E:\petrel_project\results\stats_csv"
 # Directory containing petrel_detection scripts (generate_tables, post_hoc, downstream, etc.)
 PETREL_SCRIPTS_DIR = r"E:\petrel_project\petrel_detection"
 
-# ── 12. Hardware ──────────────────────────────────────────────────────────────
+# ── 13. Hardware ──────────────────────────────────────────────────────────────
 ACCELERATOR = "gpu"   # Change to "cpu" if no GPU available
 DEVICES     = [0]     # Change to 1 (integer) if using CPU
