@@ -147,6 +147,10 @@ RAW_ANNOT_TEST    = r"E:\petrel_project\raw_annot\test"
 # Ground truth file and duration used during hyperparameter evaluation
 GT_PATH            = r"E:\petrel_project\raw_annot\test\your_gt_file.txt"
 AUDIO_DURATION_SEC = 8040.0
+
+# Linux / no GPU: 
+ACCELERATOR = "cpu"
+DEVICES     = 1
 ```
 
 All output directories are created automatically. Experiment hyperparameter combinations can be adjusted in the `EXPERIMENTS` list in `config.py`.
