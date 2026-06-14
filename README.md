@@ -115,8 +115,8 @@ petrel_project/
 │
 ├── segment_data/
 │   ├── train_data/                    ← 30-second segments + annotation CSV files
-│   ├── test_data/<recorder>/          ← Segments for the test recording
-│   └── predict_data/<recorder>/       ← Segments per recorder (predict)
+│   ├── test_data/<audio_file>/          ← Segments for the test audio file
+│   └── predict_data/<audio_file>/       ← Segments per audio file (predict)
 │
 ├── prep/                              ← vak-prepared datasets
 │   ├── train/
