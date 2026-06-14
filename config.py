@@ -97,7 +97,7 @@ TWEETYNET_PY = r"D:\Anaconda\envs\vak-env\Lib\site-packages\vak\models\tweetynet
 
 # Ground truth annotation file used during run_experiment.py evaluation
 # (the Raven .txt file for the audio that was used as the test set in training)
-GT_PATH = r"E:\petrel\01p2.txt"
+GT_PATH = r"E:\petrel_project\raw_annot\test\r02_250421081501p2.txt"
 
 # Total duration of the test audio used in run_experiment.py (seconds)
 AUDIO_DURATION_SEC = 8040.0
