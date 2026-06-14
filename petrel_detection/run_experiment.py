@@ -29,7 +29,7 @@ from config import (
     TRAIN_RESULTS_ROOT,
     GT_PATH,
     AUDIO_DURATION_SEC,
-    PREDICT_CSV_DIR,
+    EXPERIMENT_CSV_DIR,
     RAVEN_TABLE_DIR,
     METRIC_TABLE_DIR,
     SUMMARY_CSV,
@@ -39,6 +39,8 @@ from config import (
     RANKING_W,
     IOU_THRESHOLD,
     PETREL_SCRIPTS_DIR,
+    TEST_RECORDING_NAME,
+    PREP_TEST_DIR,
 )
 
 sys.path.insert(0, PETREL_SCRIPTS_DIR)
@@ -86,22 +88,42 @@ def find_checkpoint(results_dir: Path) -> str:
     raise FileNotFoundError(f"No checkpoint found in {ckpt.parent}")
 
 
+def find_test_prep_dataset() -> str:
+    """Locate the vak-prepared dataset for the test recording under PREP_TEST_DIR."""
+    prep_root = Path(PREP_TEST_DIR)
+    candidates = sorted(
+        [d for d in prep_root.iterdir()
+         if d.is_dir() and d.name.startswith(TEST_RECORDING_NAME)],
+        key=lambda d: d.stat().st_mtime,
+    )
+    if not candidates:
+        raise FileNotFoundError(
+            f"No prepared test dataset found for '{TEST_RECORDING_NAME}' in {PREP_TEST_DIR}.\n"
+            "Run prepare_data.py --mode test first."
+        )
+    return str(candidates[-1])
+
+
 def update_predict_toml(checkpoint_path: str, labelmap_path: str, standardizer_path: str, tag: str):
     with open(PREDICT_TOML, "r", encoding="utf-8") as f:
         config = tomlkit.load(f)
     config["vak"]["predict"]["checkpoint_path"]          = checkpoint_path
     config["vak"]["predict"]["labelmap_path"]            = labelmap_path
     config["vak"]["predict"]["frames_standardizer_path"] = standardizer_path
-    config["vak"]["predict"]["annot_csv_filename"]       = f"01p2_{tag}.annot.csv"
+    config["vak"]["predict"]["output_dir"]               = EXPERIMENT_CSV_DIR
+    config["vak"]["predict"]["annot_csv_filename"]       = f"{TEST_RECORDING_NAME}_{tag}.annot.csv"
+    config["vak"]["predict"]["dataset"]["path"]          = find_test_prep_dataset()
     with open(PREDICT_TOML, "w", encoding="utf-8") as f:
         tomlkit.dump(config, f)
-    print(f"  ✓ Updated predict toml — annot_csv_filename: 01p2_{tag}.annot.csv")
+    print(f"  ✓ Updated predict toml")
+    print(f"    annot_csv : {TEST_RECORDING_NAME}_{tag}.annot.csv")
+    print(f"    dataset   : {config['vak']['predict']['dataset']['path']}")
 
 
 def find_predict_csv() -> str:
-    csvs = list(Path(PREDICT_CSV_DIR).glob("*.annot.csv"))
+    csvs = list(Path(EXPERIMENT_CSV_DIR).glob("*.annot.csv"))
     if not csvs:
-        raise FileNotFoundError(f"No .annot.csv found in {PREDICT_CSV_DIR}")
+        raise FileNotFoundError(f"No .annot.csv found in {EXPERIMENT_CSV_DIR}")
     return str(sorted(csvs, key=lambda p: p.stat().st_mtime)[-1])
 
 
@@ -133,9 +155,9 @@ def run_one_experiment(beta: float, gamma: float) -> dict:
     standardizer_path = str(results_dir / "FramesStandardizer")
     update_predict_toml(checkpoint_path, labelmap_path, standardizer_path, tag)
 
-    if os.path.exists(PREDICT_CSV_DIR):
-        shutil.rmtree(PREDICT_CSV_DIR)
-    os.makedirs(PREDICT_CSV_DIR)
+    if os.path.exists(EXPERIMENT_CSV_DIR):
+        shutil.rmtree(EXPERIMENT_CSV_DIR)
+    os.makedirs(EXPERIMENT_CSV_DIR)
     print("  ✓ Cleared prediction output directory")
 
     print("\n[4/6] Starting prediction...")
