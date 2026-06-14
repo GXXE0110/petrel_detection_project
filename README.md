@@ -118,7 +118,6 @@ petrel_project/
     ├── predict/                        ← Raw .annot.csv prediction outputs
     ├── test/                           ← Test-set prediction outputs
     ├── raven_tables/                   ← Converted Raven annotation tables
-    ├── raven_tables_test/
     ├── metric_tables/                  ← GT vs Pred comparison tables
     └── stats_csv/                      ← Time-of-arrival statistics
 ```
