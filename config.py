@@ -61,9 +61,9 @@ PREP_PREDICT_DIR = r"E:\petrel_project\prep\predict"
 # ── 7. Training Parameters ────────────────────────────────────────────────────
 
 # Duration splits for the training dataset (seconds)
-TRAIN_DUR = 800
-VAL_DUR   = 300
-TEST_DUR  = 500
+TRAIN_DUR = 1000
+VAL_DUR   = 500
+TEST_DUR  = 0
 
 # Target vocalization label used in annotation CSV files
 LABELSET = "p"
@@ -109,39 +109,47 @@ RANKING_W = 0.2
 IOU_THRESHOLD = 0.3
 
 
-# ── 9. Result Output Directories ─────────────────────────────────────────────
+# ── 9. Test Recording Identity (run_experiment.py) ───────────────────────────
+# The stem name of the test recording used in run_experiment.py.
+# This is used to:
+#   (a) locate the correct prep/test/ dataset directory
+#   (b) name the output .annot.csv file for each experiment
+# Example: if your test file is "r02_250421081501p2.wav", set:
+TEST_RECORDING_NAME = "r02_250421081501p2"
 
-PREDICT_CSV_DIR    = r"E:\petrel_project\results\predict"
+
+# ── 10. Result Output Directories ────────────────────────────────────────────
+
+# run_experiment.py outputs (test-set evaluation during hyperparameter search)
+EXPERIMENT_CSV_DIR = r"E:\petrel_project\results\test"
 RAVEN_TABLE_DIR    = r"E:\petrel_project\results\raven_tables"
 METRIC_TABLE_DIR   = r"E:\petrel_project\results\metric_tables"
-STATS_CSV_DIR      = r"E:\petrel_project\results\stats_csv"
 SUMMARY_CSV        = r"E:\petrel_project\experiment_summary.csv"
 
-# For test-set evaluation (train_and_evaluate.py)
-PREDICT_CSV_DIR_TEST  = r"E:\petrel_project\results\test"
-RAVEN_TABLE_DIR_TEST  = r"E:\petrel_project\results\raven_tables_test"
-METRIC_TABLE_DIR_TEST = r"E:\petrel_project\results\metric_tables_test"
-EVAL_SUMMARY_CSV      = r"E:\petrel_project\evaluation_summary.csv"
+# batch_predict.py outputs (full-night prediction)
+PREDICT_CSV_DIR    = r"E:\petrel_project\results\predict"
+STATS_CSV_DIR      = r"E:\petrel_project\results\stats_csv"
 
-
-# ── 10. Script Locations ──────────────────────────────────────────────────────
-
-# Directory containing petrel_detection scripts (generate_tables, post_hoc, downstream, etc.)
-PETREL_SCRIPTS_DIR = r"E:\petrel_project\petrel_detection"
 
 # ── 11. Downstream Statistics ─────────────────────────────────────────────────
 
 # Excel file mapping recorder filenames to recording start times
 RECORDING_START_XLSX = r"E:\petrel_project\recording_start_times.xlsx"
 
-# Suffix pattern of Raven table files to process (update to match current prediction tag)
+# Suffix pattern of Raven table files to process (should match current prediction tag)
 DOWNSTREAM_SUFFIX = "_b02_g05_full_predict.txt"
 
 # Input: Raven tables directory to process
-DOWNSTREAM_INPUT_DIR = r"E:\petrel_project\results\raven_tables\night_1"
+DOWNSTREAM_INPUT_DIR = r"E:\petrel_project\results\raven_tables"
 
 # Output: where per-recorder CSV and merged master file are saved
-DOWNSTREAM_OUTPUT_DIR = r"E:\petrel_project\results\stats_csv\night_1_b02_g05"
+DOWNSTREAM_OUTPUT_DIR = r"E:\petrel_project\results\stats_csv"
+
+
+# ── 12. Script Locations ──────────────────────────────────────────────────────
+
+# Directory containing petrel_detection scripts (generate_tables, post_hoc, downstream, etc.)
+PETREL_SCRIPTS_DIR = r"E:\petrel_project\petrel_detection"
 
 # ── 12. Hardware ──────────────────────────────────────────────────────────────
 ACCELERATOR = "gpu"   # Change to "cpu" if no GPU available
